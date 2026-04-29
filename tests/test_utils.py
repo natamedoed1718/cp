@@ -5,7 +5,6 @@ from pathlib import Path
 from src.utils import load_data_from_json
 
 
-
 def test_load_valid_data():
     """Тест загрузки корректных данных из JSON"""
     test_data = [
@@ -38,10 +37,10 @@ def test_load_valid_data():
 
         assert len(categories) == 1
         assert categories[0].name == "Электроника"
-        assert len(categories[0].products) == 2
-        assert categories[0].products[0].name == "Смартфон"
-        assert categories[0].products[0].price == 50000.0
-        assert categories[0].products[0].quantity == 10
+        assert len(categories[0].products_list) == 2
+        assert categories[0].products_list[0].name == "Смартфон"
+        assert categories[0].products_list[0].price == 50000.0
+        assert categories[0].products_list[0].quantity == 10
 
     finally:
         Path(tmp_file_path).unlink()
@@ -65,7 +64,7 @@ def test_load_empty_products():
         categories = load_data_from_json(tmp_file_path)
 
         assert len(categories) == 1
-        assert len(categories[0].products) == 0
+        assert len(categories[0].products_list) == 0
 
     finally:
         Path(tmp_file_path).unlink()
@@ -129,7 +128,35 @@ def test_multiple_categories():
         assert len(categories) == 2
         assert categories[0].name == "Категория 1"
         assert categories[1].name == "Категория 2"
-        assert categories[0].products[0].price == 100.0
+        assert categories[0].products_list[0].price == 100.0
 
+    finally:
+        Path(tmp_file_path).unlink()
+
+
+def test_load_data_with_unicode():
+    """Тест загрузки данных с юникод символами"""
+    test_data = [
+        {
+            "name": "Электроника",
+            "description": "Различные устройства",
+            "products": [
+                {
+                    "name": "Смартфон ©",
+                    "description": "Мощный смартфон",
+                    "price": 50000.0,
+                    "quantity": 10
+                }
+            ]
+        }
+    ]
+
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False, encoding='utf-8') as tmp_file:
+        json.dump(test_data, tmp_file, ensure_ascii=False)
+        tmp_file_path = tmp_file.name
+
+    try:
+        categories = load_data_from_json(tmp_file_path)
+        assert categories[0].products_list[0].name == "Смартфон ©"
     finally:
         Path(tmp_file_path).unlink()
