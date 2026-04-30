@@ -1,8 +1,53 @@
+from abc import ABC, abstractmethod
 from typing import List
 
 
-class Product:
+class BaseProduct(ABC):
+    """Абстрактный базовый класс для всех продуктов"""
+
+    @abstractmethod
+    def __str__(self):
+        pass
+
+    @abstractmethod
+    def __add__(self, other):
+        pass
+
+
+class MixinRepr:
+    """Миксин для вывода информации о создании объекта"""
+
+    def __init__(self, *args, **kwargs):
+        # Сохраняем параметры для __repr__
+        self._args = args
+        self._kwargs = kwargs
+
+        # Выводим информацию о создании объекта
+        print(f"Создан объект {self.__class__.__name__} с параметрами: {args}, {kwargs}")
+        # Вызываем следующий конструктор в цепочке наследования
+        super().__init__()
+
+    def __repr__(self):
+        """Возвращает строку с информацией о создании объекта"""
+        class_name = self.__class__.__name__
+
+        # Формируем строку параметров
+        params = []
+        if hasattr(self, "_args"):
+            for arg in self._args:
+                params.append(repr(arg))
+        if hasattr(self, "_kwargs"):
+            for key, value in self._kwargs.items():
+                params.append(f"{key}={repr(value)}")
+
+        return f"{class_name}({', '.join(params)})"
+
+
+class Product(BaseProduct, MixinRepr):
     def __init__(self, name: str, description: str, price: float, quantity: int):
+        # Вызываем конструктор миксина с передачей всех параметров
+        super().__init__(name, description, price, quantity)
+
         self.name = name
         self.description = description
         self.__price = price
@@ -74,7 +119,6 @@ class Category:
         total_quantity = sum(product.quantity for product in self.__products)
         return f"{self.name}, количество продуктов: {total_quantity} шт."
 
-    # приватный список продуктов
     def add_product(self, product):
         if not isinstance(product, Product):
             raise TypeError("Можно добавлять только продукты или их наследников")
@@ -82,7 +126,6 @@ class Category:
         self.__products.append(product)
         Category.product_count += 1
 
-    # декоратор
     @property
     def products_list(self):
         return self.__products
