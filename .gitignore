@@ -207,4 +207,5 @@ __marimo__/
 .idea/
 
 .coverage
-coverage.xml.idea/
+coverage.xml
+
