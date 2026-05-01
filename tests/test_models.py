@@ -1,5 +1,6 @@
-import pytest
 from unittest.mock import patch
+
+import pytest
 
 from src.models import Category, LawnGrass, Product, Smartphone
 
@@ -67,7 +68,7 @@ def test_price_setter_lower_price_confirmed():
     """Тест понижения цены с подтверждением"""
     product = Product("Test", "Desc", 100, 1)
 
-    with patch('builtins.input', return_value='y'):
+    with patch("builtins.input", return_value="y"):
         product.price = 80
 
     assert product.price == 80
@@ -77,7 +78,7 @@ def test_price_setter_lower_price_cancelled():
     """Тест понижения цены с отменой"""
     product = Product("Test", "Desc", 100, 1)
 
-    with patch('builtins.input', return_value='n'):
+    with patch("builtins.input", return_value="n"):
         product.price = 80
 
     assert product.price == 100  # Цена не изменилась
@@ -107,9 +108,7 @@ def test_new_product():
 
 def test_new_product_update_existing():
     """Тест обновления существующего продукта"""
-    existing_products = [
-        Product("Phone", "Smartphone", 1000, 5)
-    ]
+    existing_products = [Product("Phone", "Smartphone", 1000, 5)]
 
     new_data = {
         "name": "Phone",
@@ -126,9 +125,7 @@ def test_new_product_update_existing():
 
 def test_new_product_update_existing_lower_price():
     """Тест обновления существующего с более низкой ценой"""
-    existing_products = [
-        Product("Phone", "Smartphone", 1000, 5)
-    ]
+    existing_products = [Product("Phone", "Smartphone", 1000, 5)]
 
     new_data = {
         "name": "Phone",
@@ -203,10 +200,7 @@ def test_add_invalid_product():
 
 def test_category_str():
     """Тест строкового представления категории"""
-    products = [
-        Product("Phone", "Desc", 100, 5),
-        Product("Laptop", "Desc", 500, 3)
-    ]
+    products = [Product("Phone", "Desc", 100, 5), Product("Laptop", "Desc", 500, 3)]
     category = Category("Electronics", "Devices", products)
 
     expected = "Electronics, количество продуктов: 8 шт."
@@ -215,10 +209,7 @@ def test_category_str():
 
 def test_category_products_property():
     """Тест свойства products (с выводом в строку)"""
-    products = [
-        Product("Phone", "Desc", 100, 5),
-        Product("Laptop", "Desc", 500, 3)
-    ]
+    products = [Product("Phone", "Desc", 100, 5), Product("Laptop", "Desc", 500, 3)]
     category = Category("Electronics", "Devices", products)
 
     expected = "Phone, 100 руб. Остаток: 5 шт.\nLaptop, 500 руб. Остаток: 3 шт."
@@ -233,6 +224,44 @@ def test_category_products_list_property():
     assert len(category.products_list) == 1
     assert category.products_list[0].name == "Phone"
 
-pass
-pass
-pass
+
+def test_base_product_abstract():
+    """Тест, что BaseProduct - абстрактный класс"""
+    from src.models import BaseProduct
+
+    # Проверяем, что BaseProduct - абстрактный класс
+    assert BaseProduct.__abstractmethods__ == {"__str__", "__add__"}
+
+
+def test_mixin_repr():
+    """Тест, что миксин работает правильно"""
+    # Перехватываем вывод в консоль
+    import sys
+    from io import StringIO
+
+    from src.models import Product
+
+    captured_output = StringIO()
+    sys.stdout = captured_output
+
+    # Создаем продукт
+    product = Product("Test", "Description", 100, 5)
+
+    # Возвращаем вывод
+    sys.stdout = sys.__stdout__
+
+    # Проверяем, что информация о создании была выведена
+    output = captured_output.getvalue()
+    assert "Создан объект Product" in output
+    assert "Test" in output
+
+    # Проверяем repr
+    assert repr(product).startswith("Product(")
+
+
+def test_product_inheritance():
+    """Тест, что Product наследуется от BaseProduct и MixinRepr"""
+    from src.models import BaseProduct, MixinRepr, Product
+
+    assert issubclass(Product, BaseProduct)
+    assert issubclass(Product, MixinRepr)
