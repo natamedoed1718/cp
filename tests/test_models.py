@@ -265,3 +265,49 @@ def test_product_inheritance():
 
     assert issubclass(Product, BaseProduct)
     assert issubclass(Product, MixinRepr)
+
+
+def test_product_init_zero_quantity():
+    """Тест создания продукта с нулевым количеством (Задание 1)"""
+    with pytest.raises(ValueError, match="Товар с нулевым количеством не может быть добавлен"):
+        Product("Test", "Description", 100, 0)
+
+
+def test_product_init_negative_quantity():
+    """Тест создания продукта с отрицательным количеством (Задание 1)"""
+    with pytest.raises(ValueError, match="Товар с нулевым количеством не может быть добавлен"):
+        Product("Test", "Description", 100, -5)
+
+
+def test_category_middle_price_with_products():
+    """Тест подсчета средней цены в категории с товарами (Задание 2)"""
+    products = [Product("Phone", "Desc", 100, 5), Product("Laptop", "Desc", 200, 3), Product("Tablet", "Desc", 150, 2)]
+    category = Category("Electronics", "Devices", products)
+
+    expected_average = (100 + 200 + 150) / 3
+    assert category.middle_price() == expected_average
+
+
+def test_category_middle_price_empty():
+    """Тест подсчета средней цены в пустой категории (Задание 2)"""
+    category = Category("Empty", "No products", [])
+    assert category.middle_price() == 0
+
+
+def test_category_middle_price_one_product():
+    """Тест подсчета средней цены с одним товаром"""
+    products = [Product("Phone", "Desc", 100, 5)]
+    category = Category("Electronics", "Devices", products)
+    assert category.middle_price() == 100
+
+
+def test_smartphone_zero_quantity():
+    """Тест создания смартфона с нулевым количеством"""
+    with pytest.raises(ValueError, match="Товар с нулевым количеством не может быть добавлен"):
+        Smartphone("iPhone", "Desc", 1000, 0, 95.5, "15 Pro", 256, "Black")
+
+
+def test_lawngrass_zero_quantity():
+    """Тест создания газонной травы с нулевым количеством"""
+    with pytest.raises(ValueError, match="Товар с нулевым количеством не может быть добавлен"):
+        LawnGrass("Grass", "Desc", 100, 0, "USA", "7 days", "Green")

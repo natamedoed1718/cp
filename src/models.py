@@ -45,7 +45,10 @@ class MixinRepr:
 
 class Product(BaseProduct, MixinRepr):
     def __init__(self, name: str, description: str, price: float, quantity: int):
-        # Вызываем конструктор миксина с передачей всех параметров
+        # Проверка на нулевое количество
+        if quantity <= 0:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен")
+
         super().__init__(name, description, price, quantity)
 
         self.name = name
@@ -125,6 +128,14 @@ class Category:
 
         self.__products.append(product)
         Category.product_count += 1
+
+    def middle_price(self) -> float:
+        """Подсчитывает средний ценник всех товаров в категории"""
+        try:
+            total_price = sum(product.price for product in self.__products)
+            return total_price / len(self.__products)
+        except ZeroDivisionError:
+            return 0
 
     @property
     def products_list(self):
