@@ -1,7 +1,9 @@
-import pytest
 import json
 import tempfile
 from pathlib import Path
+
+import pytest
+
 from src.utils import load_data_from_json
 
 
@@ -12,23 +14,13 @@ def test_load_valid_data():
             "name": "Электроника",
             "description": "Различные электронные устройства",
             "products": [
-                {
-                    "name": "Смартфон",
-                    "description": "Мощный смартфон",
-                    "price": 50000.0,
-                    "quantity": 10
-                },
-                {
-                    "name": "Ноутбук",
-                    "description": "Игровой ноутбук",
-                    "price": 80000.0,
-                    "quantity": 5
-                }
-            ]
+                {"name": "Смартфон", "description": "Мощный смартфон", "price": 50000.0, "quantity": 10},
+                {"name": "Ноутбук", "description": "Игровой ноутбук", "price": 80000.0, "quantity": 5},
+            ],
         }
     ]
 
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False, encoding='utf-8') as tmp_file:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as tmp_file:
         json.dump(test_data, tmp_file, ensure_ascii=False)
         tmp_file_path = tmp_file.name
 
@@ -48,15 +40,9 @@ def test_load_valid_data():
 
 def test_load_empty_products():
     """Тест загрузки категории без продуктов"""
-    test_data = [
-        {
-            "name": "Пустая категория",
-            "description": "Категория без товаров",
-            "products": []
-        }
-    ]
+    test_data = [{"name": "Пустая категория", "description": "Категория без товаров", "products": []}]
 
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False, encoding='utf-8') as tmp_file:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as tmp_file:
         json.dump(test_data, tmp_file, ensure_ascii=False)
         tmp_file_path = tmp_file.name
 
@@ -78,7 +64,7 @@ def test_file_not_found():
 
 def test_invalid_json():
     """Тест на некорректный JSON"""
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False, encoding='utf-8') as tmp_file:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as tmp_file:
         tmp_file.write("{invalid json")
         tmp_file_path = tmp_file.name
 
@@ -95,30 +81,16 @@ def test_multiple_categories():
         {
             "name": "Категория 1",
             "description": "Описание 1",
-            "products": [
-                {
-                    "name": "Товар 1",
-                    "description": "Описание товара 1",
-                    "price": 100.0,
-                    "quantity": 5
-                }
-            ]
+            "products": [{"name": "Товар 1", "description": "Описание товара 1", "price": 100.0, "quantity": 5}],
         },
         {
             "name": "Категория 2",
             "description": "Описание 2",
-            "products": [
-                {
-                    "name": "Товар 2",
-                    "description": "Описание товара 2",
-                    "price": 200.0,
-                    "quantity": 3
-                }
-            ]
-        }
+            "products": [{"name": "Товар 2", "description": "Описание товара 2", "price": 200.0, "quantity": 3}],
+        },
     ]
 
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False, encoding='utf-8') as tmp_file:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as tmp_file:
         json.dump(test_data, tmp_file, ensure_ascii=False)
         tmp_file_path = tmp_file.name
 
@@ -140,18 +112,11 @@ def test_load_data_with_unicode():
         {
             "name": "Электроника",
             "description": "Различные устройства",
-            "products": [
-                {
-                    "name": "Смартфон ©",
-                    "description": "Мощный смартфон",
-                    "price": 50000.0,
-                    "quantity": 10
-                }
-            ]
+            "products": [{"name": "Смартфон ©", "description": "Мощный смартфон", "price": 50000.0, "quantity": 10}],
         }
     ]
 
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False, encoding='utf-8') as tmp_file:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as tmp_file:
         json.dump(test_data, tmp_file, ensure_ascii=False)
         tmp_file_path = tmp_file.name
 
